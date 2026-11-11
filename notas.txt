@@ -1,0 +1,21 @@
+
+Preguntas:
+1. ¿ Definir qué profesores dictan qué cursos (Sea aleatoriamente o por medio del input) ?
+2. ¿ No importa cuántos salones hayan virtualmente es coo si solo hubiera un salón, porque de todas formas un grupo no puede estar en dos salones en la misma franja, este se puede asignar aleatoriamente.? 
+3. Entender las franjas que se repartiran diaramente, y calcular pues su duración. ¿ ?
+4. Cómo va a ser la evluación de la interfaz? también se pregunta en la sustentación? Debe ser en tkinter
+
+
+Posible representación del estado:
+Estado inicial = LO que llegue del input
+Estado = una matriz de filas franja horaria y columnas días de la semana con tripleta (curso, profesor y salon), lista cursos 
+Estado final = matriz, lista cursos vacía (ya asignada). 
+
+Restricciones:
+-No pueden haber profesores,franjas, cursos ni salones con el mismo ID
+-No pueden haber cursos con una duración menor a 2 horas
+-No pueden haber profesores sin cursos asignados
+-No puede haber una franja con una hora inicial mayor a la final
+
+Método Solapar Franja:
+-Evita asignar un profesor, un salón en franjas con horarios solapados.

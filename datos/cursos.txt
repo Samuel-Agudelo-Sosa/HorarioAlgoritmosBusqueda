@@ -1,0 +1,5 @@
+C01,Calculo,4
+C02,Fisica,3
+C03,Programacion,2
+C04,Taller de Ingenieria,2
+C01,FLP,4
