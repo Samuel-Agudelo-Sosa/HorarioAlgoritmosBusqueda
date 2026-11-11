@@ -1,7 +1,7 @@
  # test_carga.py
 import os
-from logica.GestorArchivos import GestorArchivos
-from modelos.VariableCurso import VariableCurso
+from backend.core.logica.GestorArchivos import GestorArchivos
+from backend.core.modelos.VariableCurso import VariableCurso
 
 def probar_sistema():
     # 1. Definir rutas relativas a los archivos de prueba

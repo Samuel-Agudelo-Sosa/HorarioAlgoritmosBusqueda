@@ -1,9 +1,9 @@
 import os
-from modelos.Curso import Curso
-from modelos.Profesor import Profesor
-from modelos.Salon import Salon
-from modelos.Franja import Franja
-from modelos.VariableCurso import VariableCurso
+from backend.core.modelos.Curso import Curso
+from backend.core.modelos.Profesor import Profesor
+from backend.core.modelos.Salon import Salon
+from backend.core.modelos.Franja import Franja
+from backend.core.modelos.VariableCurso import VariableCurso
 
 
 class GestorArchivos:
