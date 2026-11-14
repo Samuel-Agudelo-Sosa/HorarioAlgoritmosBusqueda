@@ -36,3 +36,13 @@ class Nodo:
     def camino_solucion(self):
         return [nodo.operacion for nodo in self.camino_nodos() if nodo.operacion is not None]
         #No hay operacion (none) para llegar a la raíz por eso la validación
+
+    def __repr__(self):
+        return f"<Node {self.state}>"
+
+    def __eq__(self, otro): #Mira estados pero ignora padre, costo o profundidad
+        return isinstance(otro, Nodo) and self.estado == otro.estado
+
+
+    def __hash__(self): #permite calcular un valor único ( hash ) a cada objeto dentro de sets
+        return hash(self.estado)

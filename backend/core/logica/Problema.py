@@ -30,7 +30,7 @@ class problema(ABC):
 
     def heuristica(self, estado):
         #Se deja en 0 para los no informados.
-        pass
+        return 0
 
 
 
