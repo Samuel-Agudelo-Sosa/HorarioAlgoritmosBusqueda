@@ -1,5 +1,10 @@
-Lunes,07:00,10:00
-  Lunes, 08:00,       17:00
-Lunes,07:00,10:00
-Martes,07:00,08:00
-Sabado,10:00,12:00
+Lunes,07:00,11:00
+Lunes,14:00,17:00
+Martes,08:00,12:00
+Martes,14:00,16:00
+Miercoles,07:00,10:00
+Miercoles,10:00,12:00
+Jueves,08:00,12:00
+Jueves,14:00,17:00
+Viernes,07:00,10:00
+Sabado,08:00,12:00

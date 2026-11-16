@@ -21,6 +21,7 @@ class Busqueda(ABC):
         if self.control == 3 and hijo.estado in explorados:
             #Filtro globalen tabla hash/set que es o(1) 
             return False
+        return True
 
 
     def comprobar_limite(self):

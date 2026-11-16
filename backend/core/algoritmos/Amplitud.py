@@ -1,12 +1,6 @@
-import sys
-from pathlib import Path
-
-sys.path.append(str(Path(__file__).resolve().parent.parent))
-
-
 from collections import deque
-from Nodo import Nodo
-from Busqueda import Busqueda
+from backend.logica.Nodo import Nodo
+from backend.logica.Busqueda import Busqueda
 
 class Amplitud(Busqueda):
 
@@ -27,7 +21,7 @@ class Amplitud(Busqueda):
                 return nodo_actual
 
             for hijo in nodo_actual.generarHijos(problema):
-                if self.es_valido(hijo, nodo_actual, explorados) #control de redundancia
+                if self.es_valido(hijo, nodo_actual, explorados): #control de redundancia
                     if self.control == 3:
                         explorados.add(hijo.estado)
                     frontera.append(hijo)

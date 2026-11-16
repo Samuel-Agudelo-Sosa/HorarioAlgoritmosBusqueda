@@ -1,9 +1,9 @@
 import os
-from backend.core.modelos.Curso import Curso
-from backend.core.modelos.Profesor import Profesor
-from backend.core.modelos.Salon import Salon
-from backend.core.modelos.Franja import Franja
-from backend.core.modelos.VariableCurso import VariableCurso
+from backend.modelos.Curso import Curso
+from backend.modelos.Profesor import Profesor
+from backend.modelos.Salon import Salon
+from backend.modelos.Franja import Franja
+from backend.modelos.VariableCurso import VariableCurso
 
 
 class GestorArchivos:
@@ -89,17 +89,54 @@ class GestorArchivos:
                     hora_inicial = datos[1].strip()
                     hora_final = datos[2].strip()
                     # Instancia temporal para validar minutos
-                f_temp = Franja(dia, hora_inicial, hora_final)
+                    f_temp = Franja(dia, hora_inicial, hora_final)
                 
-                # Validación: la hora final debe ser estrictamente mayor a la inicial
-                if f_temp.fin_minutos() <= f_temp.inicio_minutos():
-                    print(f"[Advertenci Franja inválida omitida ({dia} {hora_inicial}-{hora_final}): la hora final debe ser posterior a la hora inicial (revisa si falta formato 24h, ej. 17:00).")
-                    continue
-                clave_franja = f"{dia.lower()}_{hora_inicial}_{hora_final}"
-                if clave_franja in ids_vistos:
-                    print(f"[Advertencia] Franja duplicada omitida: {dia} {hora_inicial}-{hora_final}")
-                    continue
-                ids_vistos.add(clave_franja)
-                franjas.append(f_temp)
+                    # Validación: la hora final debe ser estrictamente mayor a la inicial
+                    if f_temp.fin_minutos() <= f_temp.inicio_minutos():
+                        print(f"[Advertenci Franja inválida omitida ({dia} {hora_inicial}-{hora_final}): la hora final debe ser posterior a la hora inicial (revisa si falta formato 24h, ej. 17:00).")
+                        continue
+                    clave_franja = f"{dia.lower()}_{hora_inicial}_{hora_final}"
+                    if clave_franja in ids_vistos:
+                        print(f"[Advertencia] Franja duplicada omitida: {dia} {hora_inicial}-{hora_final}")
+                        continue
+                    ids_vistos.add(clave_franja)
+                    franjas.append(f_temp)
               
         return franjas
+
+
+    @staticmethod
+    def generar_variables_csp(cursos, profesores):
+        variables = []
+        mapa_cursos = {c.id_curso: c for c in cursos}
+        cursos_asignados = set()
+        id_var = 0
+
+        for prof in profesores:
+            for id_curso in prof.id_cursos:
+                if id_curso not in mapa_cursos:
+                    print(f"[Advertencia] el curso {id_curso} del prof. {prof.nombre} no existe en cursos.txt")
+                    continue
+                if id_curso in cursos_asignados:
+                    print(f"[Advertencia] El curso {id_curso} ya tiene profesor asignado")
+                    continue
+                variables.append(VariableCurso(id_var, mapa_cursos[id_curso], prof))
+                cursos_asignados.add(id_curso)
+                id_var += 1
+
+        if len(cursos_asignados) < len(cursos):
+            faltantes = set(mapa_cursos.keys()) - cursos_asignados
+            raise ValueError(f"Los siguientes cursos no tienen profesor asignado {', '.join(faltantes)}")
+
+        return variables
+
+
+    @staticmethod
+    def cargar_todo(rutas_archivos):
+        cursos = GestorArchivos.cargar_cursos(rutas_archivos["cursos"])
+        profesores = GestorArchivos.cargar_profesores(rutas_archivos["profesores"])
+        salones = GestorArchivos.cargar_salones(rutas_archivos["salones"])
+        franjas = GestorArchivos.cargar_franjas(rutas_archivos["franjas"])
+        variables_curso = GestorArchivos.generar_variables_csp(cursos, profesores)
+        return variables_curso, franjas, salones
+                

@@ -1,6 +1,7 @@
 class Franja:
 
     def __init__(self, dia, inicio, fin):
+        self.id_franja = f"{dia}_{inicio}_{fin}"
         self.dia = dia
         self.inicio = inicio
         self.fin = fin

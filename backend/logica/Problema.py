@@ -2,11 +2,10 @@
 from abc import ABC, abstractmethod
 
 
-class problema(ABC):
+class Problema(ABC):
 
-    def __init__(self, estado_inicial, operaciones, estado_meta):
+    def __init__(self, estado_inicial, estado_meta):
         self.estado_inicial = estado_inicial
-        self.operaciones = operaciones
         self.estado_meta = estado_meta
 
 

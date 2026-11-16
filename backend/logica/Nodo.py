@@ -7,7 +7,7 @@ class Nodo:
         self.padre = padre
         self.operacion = operacion #ayuda a obtener el camino de la solucion
         self.g = g
-        self.profundidad = 0 if self.padre is None else self.padre + 1
+        self.profundidad = 0 if self.padre is None else self.padre.profundidad + 1
 
 
     def generarHijos(self, problema):
@@ -38,7 +38,7 @@ class Nodo:
         #No hay operacion (none) para llegar a la raíz por eso la validación
 
     def __repr__(self):
-        return f"<Node {self.state}>"
+        return f"<Node {self.estado}>"
 
     def __eq__(self, otro): #Mira estados pero ignora padre, costo o profundidad
         return isinstance(otro, Nodo) and self.estado == otro.estado

@@ -19,3 +19,8 @@ Restricciones:
 
 Método Solapar Franja:
 -Evita asignar un profesor, un salón en franjas con horarios solapados.
+
+Documentación:
+-paso a paso para ejecutar con fastapi ambientes/entornos y web
+-paso a paso para ejecutar solo la lógica por consola
+
