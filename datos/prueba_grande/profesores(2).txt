@@ -1,4 +1,4 @@
-P01,Miguel Askar,C01;C04;C08,Lunes_07:00_11:00
+P01,Miguel Askar,C01  ;C04;C08,Lunes_07:00_11:00
 P02,Luis Toro,C02;C03;C06;C10
 P03,William Roldan,C03;C05;C09,Martes_07:00_11:00
 P04,Cardel,C07;C01;C11;C12

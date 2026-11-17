@@ -39,7 +39,7 @@ class ControladorHorario:
             elif "Costo Uniforme" in algoritmo_seleccionado:
                 algoritmo = CostoUniforme(control=nivel_control)
             elif "Profundidad Iterativa" in algoritmo_seleccionado:
-                algoritmo = ProfundidadIterativa(limite_maximo=20, control=nivel_control)
+                algoritmo = ProfundidadIterativa(limite_maximo=float('inf'), control=nivel_control)
             elif "A*" in algoritmo_seleccionado:
                 algoritmo = AEstrella(control=nivel_control)
 
@@ -72,7 +72,6 @@ class ControladorHorario:
                 solucion_texto
             ))
         except Exception as e:          
-            import traceback
             traceback.print_exc()  # Muestra en la consola exactamente en qué archivo y línea ocurrió
             self.vista.mostrar_error(f"Error al ejecutar: {str(e)}")
 

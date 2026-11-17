@@ -16,7 +16,7 @@ def main():
     controlador.set_vista(vista)
     
     # 5. Iniciar la aplicación
-    root.mainloop()
+    root.mainloop() #bucle infinito que congela el código ahí en la aplicación
 
 if __name__ == "__main__":
     main()

@@ -4,7 +4,7 @@ class Horario(Problema):
     #inicializar el problema de asignación de horarios.
     
     def __init__(self, variables_curso, franjas, salones, max_consecutivas=2):
-        #siendo un problema de satisfación de restricciones
+        #siendo un problema de satisfación de restricciones (CSP [CONSTRAINT SATISFACTION PROBLEM])
         #no tiene meta con estado fijo, sino una condición a cumplir 
         #por eso el estado meta se pasa en none
         super().__init__(estado_inicial=(), estado_meta=None)
@@ -44,6 +44,7 @@ class Horario(Problema):
             for franja in self.franjas:
                 if franja.duracion() < var_actual.curso.duracion:
                     continue
+                
                 salon = self.salones[len(estado) % len(self.salones)] #round roubin
                 if self.cumple_restricciones_duras(estado, prof, franja, salon):
                     operacion = (var_actual.id_variable, prof.id_profesor, franja.id_franja, salon.id_salon)
@@ -55,13 +56,12 @@ class Horario(Problema):
         #verificar cruce de la nueva franja y salón contra todas las clases ya asignadas
         for id_var_asig, id_prof_asig, id_franja_asig, id_salon_asig in estado:
             franja_asig = self.mapa_franjas[id_franja_asig]
-            var_asig = self.mapa_variables[id_var_asig]
-
+    
             # si las franjas se cruzan
             # Al ser el horario para un único semestre (un solo grupo), 
             # NINGUNA clase puede solaparse en el tiempo con otra clase del mismo semestre.
-            if franja_nueva.se_cruza_con(franja_asig):
-  
+            if franja_nueva.se_cruza_con(franja_asig): 
+                #esto representa todas las restricciones duras
                 return False
             
         return True
@@ -107,7 +107,7 @@ class Horario(Problema):
         franjas_dia.append(franja_nueva)
         franjas_dia.sort(key=lambda f: f.inicio_minutos())
         consecutivas = 1
-        max_seguidas = 1
+        max_seguidas = 1   
         for i in range(1, len(franjas_dia)):
             if franjas_dia[i].inicio_minutos() == franjas_dia[i - 1].fin_minutos():
                 consecutivas +=1

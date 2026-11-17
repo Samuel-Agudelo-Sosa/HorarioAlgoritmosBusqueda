@@ -34,7 +34,8 @@ class BusquedaPrimeroMejor(Busqueda):
             if problema.es_meta(nodo_actual.estado):
                 return nodo_actual
 
-
+            if self.control == 3:
+                explorados.add(nodo_actual.estado)
 
             for hijo in nodo_actual.generarHijos(problema):
                 if self.es_valido(hijo, nodo_actual, explorados):

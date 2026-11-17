@@ -15,9 +15,7 @@ class VistaHorario:
         self.root.title("Sistema de Programación Académica Universitaria - CSP")
 
 
-        # Primero solicitamos al sistema operativo que maximice la ventana. A diferencia de
-        # fullscreen, '-zoomed' respeta las barras del sistema (dock lateral y barra superior)
-        # y mantiene visible el botón de minimizar para cambiar entre aplicaciones.
+        # solicitamos al sistema operativo que maximice la ventana.
         try:
             self.root.attributes("-zoomed", True)  # Para entornos Linux (Ubuntu/GNOME)
         except tk.TclError:

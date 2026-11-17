@@ -19,7 +19,7 @@ class Busqueda(ABC):
                     return False
                 nodo_actual = nodo_actual.padre
         if self.control == 3 and hijo.estado in explorados:
-            #Filtro globalen tabla hash/set que es o(1) 
+            #Filtro global en tabla hash/set que es o(1) 
             return False
         return True
 

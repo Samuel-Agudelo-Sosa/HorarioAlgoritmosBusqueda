@@ -27,6 +27,7 @@ class GestorArchivos:
                         continue
                     if duracion < 2:
                         print(f"La duración del curso {nombre} debe ser mínimo de 2 horas")
+                        continue
                     ids_vistos.add(id_curso)
                     cursos.append(Curso(id_curso, nombre, duracion))
         return cursos
@@ -96,7 +97,7 @@ class GestorArchivos:
                 
                     # Validación: la hora final debe ser estrictamente mayor a la inicial
                     if f_temp.fin_minutos() <= f_temp.inicio_minutos():
-                        print(f"[Advertenci Franja inválida omitida ({dia} {hora_inicial}-{hora_final}): la hora final debe ser posterior a la hora inicial (revisa si falta formato 24h, ej. 17:00).")
+                        print(f"[Advertencia] Franja inválida omitida ({dia} {hora_inicial}-{hora_final}): la hora final debe ser posterior a la hora inicial (revisa si falta formato 24h, ej. 17:00).")
                         continue
                     clave_franja = f"{dia.lower()}_{hora_inicial}_{hora_final}"
                     if clave_franja in ids_vistos:
@@ -122,9 +123,10 @@ class GestorArchivos:
                 if id_curso not in mapa_cursos:
                     print(f"[Advertencia] el curso {id_curso} del prof. {prof.nombre} no existe en cursos.txt")
                     continue
-                if prof not in profs_por_curso[id_curso]:
+                if prof not in profs_por_curso[id_curso]: #profe que no se ha agregado a los profes que dictan el curso
                     profs_por_curso[id_curso].append(prof)
-        faltantes = [c_id for c_id, lista in profs_por_curso.items() if not lista]
+        #cursos que no tienen profesores asignados
+        faltantes = [c_id for c_id, lista_profesores in profs_por_curso.items() if not lista_profesores]
         if faltantes:
             raise ValueError(f"Los siguientes cursos no tienen profesor asignado: {', '.join(faltantes)}")
         variables = [
@@ -133,7 +135,7 @@ class GestorArchivos:
             ]
         #primero los cursos con menos profesores candidatos y mayor duracion
         #-v.curso.duracion permite que se ordenen de mayor a menor
-        #ya que los de valor absoluto más grande serán más negativos (menores)
+        #ya que los de valor absoluto más grande serán más negativos (menores) 
         variables.sort(key=lambda v: (len(v.profesores), -v.curso.duracion))
         for idx, var in enumerate(variables):
             var.id_variable = idx
