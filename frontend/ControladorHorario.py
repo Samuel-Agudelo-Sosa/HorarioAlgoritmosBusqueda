@@ -27,11 +27,12 @@ class ControladorHorario:
 
         algoritmo_seleccionado = self.vista.combo_algoritmo.get()
         nivel_control = int(self.vista.combo_control.get().split(" - ")[0])
+        max_consecutivas = int(self.vista.spin_consecutivas.get())
 
 
         try:
             variables, franjas, salones = GestorArchivos.cargar_todo(self.archivos)
-            problema = Horario(variables, franjas, salones)
+            problema = Horario(variables, franjas, salones, max_consecutivas = max_consecutivas)
 
             if "Amplitud" in algoritmo_seleccionado:
                 algoritmo = Amplitud(control=nivel_control)

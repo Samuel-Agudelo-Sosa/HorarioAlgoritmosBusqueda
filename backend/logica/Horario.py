@@ -3,7 +3,7 @@ from backend.logica.Problema import Problema
 class Horario(Problema):
     #inicializar el problema de asignación de horarios.
     
-    def __init__(self, variables_curso, franjas, salones):
+    def __init__(self, variables_curso, franjas, salones, max_consecutivas=2):
         #siendo un problema de satisfación de restricciones
         #no tiene meta con estado fijo, sino una condición a cumplir 
         #por eso el estado meta se pasa en none
@@ -11,6 +11,7 @@ class Horario(Problema):
         self.variables_curso = variables_curso
         self.franjas = franjas
         self.salones = salones
+        self.max_consecutivas = max_consecutivas
 
         #Diccionarios de acceso O(1) para buscar objetos por ID
         self.mapa_variables = {v.id_variable: v for v in variables_curso}
@@ -79,7 +80,7 @@ class Horario(Problema):
         if id_franja in prof.franjas_no_disponibles:
             costo += 5
         #Restricción Blanda 2 penalizar si supera n clases consecutivas
-        costo += self.penalizacion_consecutivas(estado, franja_nueva, max_consecutivas=2)
+        costo += self.penalizacion_consecutivas(estado, franja_nueva)
 
         horas_sobrantes = franja_nueva.duracion() - var.curso.duracion
         if horas_sobrantes > 0:
@@ -97,7 +98,7 @@ class Horario(Problema):
         
         return costo
 
-    def penalizacion_consecutivas(self,estado,franja_nueva, max_consecutivas=2):
+    def penalizacion_consecutivas(self,estado,franja_nueva):
         franjas_dia = [
             self.mapa_franjas[id_f]
             for _, _, id_f, _ in estado
@@ -113,7 +114,7 @@ class Horario(Problema):
                 max_seguidas = max(max_seguidas, consecutivas)
             else:
                 consecutivas = 1
-        return 4 if max_seguidas > max_consecutivas else 0
+        return 4 if max_seguidas > self.max_consecutivas else 0
 
 
     def heuristica(self, estado):

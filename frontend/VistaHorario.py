@@ -193,22 +193,25 @@ class VistaHorario:
         frame = ttk.LabelFrame(self.root, text=" 2. Configuración de Búsqueda ", padding=(14, 8))
         frame.pack(fill="x", padx=16, pady=4)
 
-        ttk.Label(frame, text="Algoritmo:").pack(side="left")
+        # Usamos un frame interno transparente para agrupar todos los controles a la izquierda y alinearlos verticalmente
+        controles_izq = tk.Frame(frame, bg="#F4F6F9")
+        controles_izq.pack(side="left", fill="y")
 
-        # ttk.Combobox: Menú desplegable de selección.
-        # state="readonly" bloquea la escritura manual para evitar opciones inválidas.
+        # 1. Combobox Algoritmo
+        ttk.Label(controles_izq, text="Algoritmo:").pack(side="left", pady=10)
         self.combo_algoritmo = ttk.Combobox(
-            frame,
+            controles_izq,
             values=["Amplitud", "Profundidad Iterativa", "Costo Uniforme", "A*"],
             state="readonly",
             width=20
         )
-        self.combo_algoritmo.current(0)  # Selecciona el primer elemento ("Amplitud") por defecto
-        self.combo_algoritmo.pack(side="left", padx=(6, 16))
+        self.combo_algoritmo.current(0)
+        self.combo_algoritmo.pack(side="left", padx=(6, 16), pady=10)
 
-        ttk.Label(frame, text="Control de Redundancia:").pack(side="left")
+        # 2. Combobox Redundancia
+        ttk.Label(controles_izq, text="Control de Redundancia:").pack(side="left", pady=10)
         self.combo_control = ttk.Combobox(
-            frame,
+            controles_izq,
             values=[
                 "0 - Sin control",
                 "1 - Evitar devolverse",
@@ -218,16 +221,25 @@ class VistaHorario:
             state="readonly",
             width=26
         )
-        self.combo_control.current(3)  # Índice 3 = "3 - Búsquedas en grafos" por defecto
-        self.combo_control.pack(side="left", padx=(6, 16))
+        self.combo_control.current(3)
+        self.combo_control.pack(side="left", padx=(6, 16), pady=10)
 
-        # Al pulsar este botón se dispara la ejecución en el controlador
-        ttk.Button(frame, text="Generar Horario", style="Primario.TButton",
-                   command=self.controlador.generar_horario).pack(side="left", padx=4)
+        # 3. Spinbox N (Clases Consecutivas) AHORA ALINEADO HORIZONTALMENTE
+        ttk.Label(controles_izq, text="Máx. clases consecutivas (N):").pack(side="left", pady=10)
+        self.spin_consecutivas = ttk.Spinbox(controles_izq, from_=1, to=5, width=5)
+        self.spin_consecutivas.set(2)
+        self.spin_consecutivas.pack(side="left", padx=(6, 16), pady=10)
 
-        # side="right" ubica este botón al extremo derecho del panel de configuración
+        # 4. Botón Generar (Pegado a la derecha de los controles)
+        ttk.Button(controles_izq, text="Generar Horario", style="Primario.TButton",
+                   command=self.controlador.generar_horario).pack(side="left", padx=4, pady=10)
+
+        # Botón Limpiar (Alineado al extremo derecho del panel principal)
         ttk.Button(frame, text="Limpiar Estadísticas",
-                   command=self.limpiar_estadisticas).pack(side="right")
+                   command=self.limpiar_estadisticas).pack(side="right", pady=10)
+
+
+
 
     def crear_panel_horario(self):
         # fill="both" y expand=True permiten que el panel del horario aproveche el espacio
@@ -306,6 +318,8 @@ class VistaHorario:
     def mostrar_error(self, mensaje):
         # Muestra una ventana modal de error que bloquea la interacción hasta pulsar OK
         messagebox.showerror("Error", mensaje)
+
+    
 
     def actualizar_horario(self, filas_horario):
         # --- EXPLICACIÓN DEL ASTERISCO (*) ---
