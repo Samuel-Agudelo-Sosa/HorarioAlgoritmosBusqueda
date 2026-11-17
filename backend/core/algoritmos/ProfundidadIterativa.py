@@ -4,7 +4,7 @@ from backend.logica.Busqueda import Busqueda
 from backend.core.algoritmos.ProfundidadLimitada import ProfundidadLimitada
 
 class ProfundidadIterativa(Busqueda):
-    def __init__(self, limite_maximo=float('inf'), control=3, maximo_nodos=50000):
+    def __init__(self, limite_maximo=float('inf'), control=3, maximo_nodos=500000):
         super().__init__(control=control, maximo_nodos = maximo_nodos)
         self.limite_maximo = limite_maximo
 

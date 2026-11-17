@@ -2,7 +2,7 @@ from backend.logica.Nodo import Nodo
 from backend.logica.Busqueda import Busqueda
 
 class ProfundidadLimitada(Busqueda):
-    def __init__(self, limite=10, control=3, maximo_nodos=50000):
+    def __init__(self, limite=10, control=3, maximo_nodos=500000):
         super().__init__(control=control, maximo_nodos = maximo_nodos)
         self.limite = limite
 

@@ -26,19 +26,21 @@ class ControladorHorario:
             return
 
         algoritmo_seleccionado = self.vista.combo_algoritmo.get()
+        nivel_control = int(self.vista.combo_control.get().split(" - ")[0])
+
 
         try:
             variables, franjas, salones = GestorArchivos.cargar_todo(self.archivos)
             problema = Horario(variables, franjas, salones)
 
             if "Amplitud" in algoritmo_seleccionado:
-                algoritmo = Amplitud(control=3)
+                algoritmo = Amplitud(control=nivel_control)
             elif "Costo Uniforme" in algoritmo_seleccionado:
-                algoritmo = CostoUniforme(control=3)
+                algoritmo = CostoUniforme(control=nivel_control)
             elif "Profundidad Iterativa" in algoritmo_seleccionado:
-                algoritmo = ProfundidadIterativa(limite_maximo=20, control=3)
+                algoritmo = ProfundidadIterativa(limite_maximo=20, control=nivel_control)
             elif "A*" in algoritmo_seleccionado:
-                algoritmo = AEstrella(control=3)
+                algoritmo = AEstrella(control=nivel_control)
 
             inicio = time.perf_counter()
             solucion_nodo = algoritmo.busqueda(problema)
@@ -49,15 +51,22 @@ class ControladorHorario:
                 filas_horario = self.formatear_horario(solucion_nodo.estado, problema)
                 self.vista.actualizar_horario(filas_horario)
                 solucion_texto = "Sí"
-
+                # Extraemos el costo del nodo solución 
+                costo_texto = f"{solucion_nodo.g:.2f}" 
             else:
                 self.vista.actualizar_horario([])
                 solucion_texto = "No"
+                costo_texto = "N/A"
                 self.vista.mostrar_error("No se encontró ninguna solución válida.")
+
+            # Obtenemos el texto seleccionado en el combo de control de redundancia
+            redundancia_seleccionada = self.vista.combo_control.get()
 
             self.vista.agregar_estadistica((
                 algoritmo_seleccionado,
+                redundancia_seleccionada,
                 algoritmo.nodos_evaluados,
+                costo_texto,
                 tiempo_segundos,
                 solucion_texto
             ))
@@ -76,15 +85,16 @@ class ControladorHorario:
         horas_ordenadas = sorted(bloques_unicos.keys(), key=lambda h: bloques_unicos[h])
         grilla = {hora: [""] * 6 for hora in horas_ordenadas}
 
-        for id_var, id_franja, id_salon in estado:
+        for id_var,id_profesor, id_franja, id_salon in estado:
             var = problema.mapa_variables[id_var]
+            prof = problema.mapa_profesores[id_profesor]
             franja = problema.mapa_franjas[id_franja]
             clave_hora = f"{franja.inicio} - {franja.fin}"
 
             dia_norm = franja.dia.lower().replace("é", "e").replace("á","a")
             if dia_norm in dias_columnas and clave_hora in grilla:
                 col_idx = dias_columnas.index(dia_norm)
-                grilla[clave_hora][col_idx] = f"{var.curso.nombre}\n{var.profesor.nombre}\n{id_salon}"
+                grilla[clave_hora][col_idx] = f"{var.curso.nombre}\n{prof.nombre}\n{id_salon}"
 
         filas = []
         for hora in horas_ordenadas:

@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 
 class Busqueda(ABC):
 
-    def __init__(self, control=3, maximo_nodos =50000):
+    def __init__(self, control=3, maximo_nodos =500000):
         self.control = control
         self.maximo_nodos = maximo_nodos
         self.nodos_evaluados = 0

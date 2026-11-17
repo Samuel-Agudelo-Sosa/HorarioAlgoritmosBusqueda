@@ -4,7 +4,7 @@ from backend.logica.Busqueda import Busqueda
 
 class BusquedaPrimeroMejor(Busqueda):
  
-    def __init__(self, f, control=3, maximo_nodos = 50000):
+    def __init__(self, f, control=3, maximo_nodos = 500000):
         super().__init__(control=control, maximo_nodos=maximo_nodos)
         self.f = f
 

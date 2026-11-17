@@ -1,3 +1,0 @@
-P01,Jair,C01;C05
-P02,William,C02
-P03,Mateo,C03;C04

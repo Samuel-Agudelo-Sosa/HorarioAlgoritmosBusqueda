@@ -16,6 +16,12 @@ class Horario(Problema):
         self.mapa_variables = {v.id_variable: v for v in variables_curso}
         self.mapa_franjas = {f.id_franja: f for f in franjas}
         self.mapa_salones = {s.id_salon : s for s in salones}
+        self.mapa_profesores = {
+            p.id_profesor: p
+            for v in variables_curso
+            for p in v.profesores
+
+        }
 
 
     def es_meta(self, estado):
@@ -30,22 +36,23 @@ class Horario(Problema):
             return [] #para evitar overflow abajo con variables_curso[len(estado)]
         #se toma la siguiente clase a asignar
         #evita que un curso se evalué dos veces o quede sin evaluar
-        siguiente_var = self.variables_curso[len(estado)]
+        var_actual = self.variables_curso[len(estado)]
         operaciones_validas = []
 
-        for franja in self.franjas:
-            if franja.duracion() < siguiente_var.curso.duracion:
-                continue
-            for salon in self.salones:
-                if self.cumple_restricciones_duras(estado, franja, salon, siguiente_var.profesor):
-                    operacion = (siguiente_var.id_variable, franja.id_franja, salon.id_salon)
+        for prof in var_actual.profesores:
+            for franja in self.franjas:
+                if franja.duracion() < var_actual.curso.duracion:
+                    continue
+                salon = self.salones[len(estado) % len(self.salones)] #round roubin
+                if self.cumple_restricciones_duras(estado, prof, franja, salon):
+                    operacion = (var_actual.id_variable, prof.id_profesor, franja.id_franja, salon.id_salon)
                     operaciones_validas.append(operacion)
 
         return operaciones_validas
 
-    def cumple_restricciones_duras(self, estado, franja_nueva, salon_nuevo, profesor_nuevo):
+    def cumple_restricciones_duras(self, estado, prof_nuevo, franja_nueva, salon_nuevo):
         #verificar cruce de la nueva franja y salón contra todas las clases ya asignadas
-        for id_var_asig, id_franja_asig, id_salon_asig in estado:
+        for id_var_asig, id_prof_asig, id_franja_asig, id_salon_asig in estado:
             franja_asig = self.mapa_franjas[id_franja_asig]
             var_asig = self.mapa_variables[id_var_asig]
 
@@ -53,13 +60,7 @@ class Horario(Problema):
             # Al ser el horario para un único semestre (un solo grupo), 
             # NINGUNA clase puede solaparse en el tiempo con otra clase del mismo semestre.
             if franja_nueva.se_cruza_con(franja_asig):
-                # Restricción Dura 1: Un salón no puede tener dos clases en la misma franja horaria
-                # if salon_nuevo.id_salon == id_salon_asig:
-                #     return False
-                
-                # Restricción Dura 2: Un profesor no puede dictar dos clases en la misma franja horaria
-                # if profesor_nuevo.id_profesor == var_asig.profesor.id_profesor:
-                #     return False
+  
                 return False
             
         return True
@@ -69,7 +70,51 @@ class Horario(Problema):
         return estado + (operacion,) 
 
     def costo_ruta(self, estado, operacion, estado_siguiente):
-        return 1 #costo de asignación es 1
+        costo = 1
+        id_var, id_profesor, id_franja, id_salon = operacion
+        var = self.mapa_variables[id_var]
+        prof = self.mapa_profesores[id_profesor]
+        franja_nueva =self.mapa_franjas[id_franja]
+        #Restricción Blanda 1 penalizar si el profesor prefiere no dictar esa clase
+        if id_franja in prof.franjas_no_disponibles:
+            costo += 5
+        #Restricción Blanda 2 penalizar si supera n clases consecutivas
+        costo += self.penalizacion_consecutivas(estado, franja_nueva, max_consecutivas=2)
+
+        horas_sobrantes = franja_nueva.duracion() - var.curso.duracion
+        if horas_sobrantes > 0:
+            costo += int(horas_sobrantes * 2)
+
+        #saturación el mismo día
+        clases_ese_dia = sum(
+            1 for _,_,id_franja,_ in estado
+
+            if self.mapa_franjas[id_franja].dia == franja_nueva.dia
+
+        )
+        if clases_ese_dia >= 2:
+            costo += 3
+        
+        return costo
+
+    def penalizacion_consecutivas(self,estado,franja_nueva, max_consecutivas=2):
+        franjas_dia = [
+            self.mapa_franjas[id_f]
+            for _, _, id_f, _ in estado
+            if self.mapa_franjas[id_f].dia == franja_nueva.dia
+        ]
+        franjas_dia.append(franja_nueva)
+        franjas_dia.sort(key=lambda f: f.inicio_minutos())
+        consecutivas = 1
+        max_seguidas = 1
+        for i in range(1, len(franjas_dia)):
+            if franjas_dia[i].inicio_minutos() == franjas_dia[i - 1].fin_minutos():
+                consecutivas +=1
+                max_seguidas = max(max_seguidas, consecutivas)
+            else:
+                consecutivas = 1
+        return 4 if max_seguidas > max_consecutivas else 0
+
 
     def heuristica(self, estado):
         #Heurística base para A*: cantidad de clases que faltan por asignar

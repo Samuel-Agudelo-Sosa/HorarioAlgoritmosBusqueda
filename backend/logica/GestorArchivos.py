@@ -41,20 +41,23 @@ class GestorArchivos:
                 if not linea_limpia:
                     continue
                 datos = linea_limpia.split(',')
-                if len(datos) == 3:
+                if len(datos) >= 3:
                     id_profesor = datos[0].strip()
                     nombre = datos[1].strip()
                     if id_profesor in ids_vistos:
                         print(f"[Advertencia] Profesor duplicado omitido: {id_profesor}")
                         continue
-
+                    
                     cursos_limpios  = datos[2].strip()
                     cursos = [c.strip() for c in cursos_limpios.split(';') if c.strip()] if cursos_limpios else []
                     if not cursos:
                         print(f"[Advertencia] El profesor {nombre}  {id_profesor} fue omitido por no tener cursos asignados")
                         continue
+                    no_disp = []
+                    if len(datos) >=4 and datos[3].strip():
+                        no_disp = [franja.strip().lower() for franja in datos[3].strip().split(';') if franja.strip()]
                     ids_vistos.add(id_profesor)
-                    profesores.append(Profesor(id_profesor, nombre, cursos))
+                    profesores.append(Profesor(id_profesor, nombre, cursos, no_disp))
         return profesores
 
 
@@ -85,7 +88,7 @@ class GestorArchivos:
                     continue
                 datos = linea_limpia.split(',')
                 if len(datos) == 3:
-                    dia = datos[0].strip()
+                    dia = datos[0].strip().lower()
                     hora_inicial = datos[1].strip()
                     hora_final = datos[2].strip()
                     # Instancia temporal para validar minutos
@@ -101,33 +104,39 @@ class GestorArchivos:
                         continue
                     ids_vistos.add(clave_franja)
                     franjas.append(f_temp)
-              
+        franjas.sort(key=lambda f: f.duracion()) 
+        #permite que los cursos de menor duración 
+        #prueben primero con las franjas de menor duración 
+
         return franjas
 
 
     @staticmethod
     def generar_variables_csp(cursos, profesores):
-        variables = []
         mapa_cursos = {c.id_curso: c for c in cursos}
-        cursos_asignados = set()
-        id_var = 0
+        profs_por_curso = {c.id_curso: [] for c in cursos}
+
 
         for prof in profesores:
             for id_curso in prof.id_cursos:
                 if id_curso not in mapa_cursos:
                     print(f"[Advertencia] el curso {id_curso} del prof. {prof.nombre} no existe en cursos.txt")
                     continue
-                if id_curso in cursos_asignados:
-                    print(f"[Advertencia] El curso {id_curso} ya tiene profesor asignado")
-                    continue
-                variables.append(VariableCurso(id_var, mapa_cursos[id_curso], prof))
-                cursos_asignados.add(id_curso)
-                id_var += 1
-
-        if len(cursos_asignados) < len(cursos):
-            faltantes = set(mapa_cursos.keys()) - cursos_asignados
-            raise ValueError(f"Los siguientes cursos no tienen profesor asignado {', '.join(faltantes)}")
-
+                if prof not in profs_por_curso[id_curso]:
+                    profs_por_curso[id_curso].append(prof)
+        faltantes = [c_id for c_id, lista in profs_por_curso.items() if not lista]
+        if faltantes:
+            raise ValueError(f"Los siguientes cursos no tienen profesor asignado: {', '.join(faltantes)}")
+        variables = [
+            VariableCurso(idx, mapa_cursos[c_id], profs_por_curso[c_id])
+            for idx, c_id in enumerate(mapa_cursos)
+            ]
+        #primero los cursos con menos profesores candidatos y mayor duracion
+        #-v.curso.duracion permite que se ordenen de mayor a menor
+        #ya que los de valor absoluto más grande serán más negativos (menores)
+        variables.sort(key=lambda v: (len(v.profesores), -v.curso.duracion))
+        for idx, var in enumerate(variables):
+            var.id_variable = idx
         return variables
 
 
