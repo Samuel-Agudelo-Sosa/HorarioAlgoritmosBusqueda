@@ -1,0 +1,9 @@
+C01,Calculo,4
+C02,Fisica,3
+C03,Programacion,3
+C04,Algebra,4
+C05,Taller,2
+C06,Estadistica,3
+C07,Discretas,4
+C08,Ingles,2
+C09,Textos,2

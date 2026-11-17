@@ -1,0 +1,12 @@
+C01,Calculo,4
+C02,Fisica,3
+C03,Programacion,3
+C04,Algebra,4
+C05,Taller,2
+C06,Estadistica,3
+C07,Discretas,4
+C08,Simulacion,4
+C09,Redes,3
+C10,Bases de Datos,3
+C11,FLP,4
+C12,Sistemas Operativos,4

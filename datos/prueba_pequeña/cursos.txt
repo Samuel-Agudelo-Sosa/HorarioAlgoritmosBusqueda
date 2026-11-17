@@ -1,0 +1,5 @@
+C01,Calculo,4
+C02,Fisica,3
+C03,Programacion,3
+C04,Algebra,2
+C05,Taller,2

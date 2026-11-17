@@ -1,5 +1,0 @@
-P01,Jair,C01;C05,Lunes_07:00_11:00
-P02,William,C02;C01;C08,Miercoles_06:00_10:00;Lunes_07:00_11:00
-P04,Joshua,C03;C06;C07;C08
-P03,Mateo,C03;C02;C06;    C04
-

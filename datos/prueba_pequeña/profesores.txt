@@ -1,0 +1,3 @@
+P01,Miguel Askar,C01;C04
+P02,Luis Toro,C02;C03
+P03,William Roldan,C03;C05
